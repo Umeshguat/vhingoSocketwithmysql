@@ -1,6 +1,6 @@
 // const express = require('express');
 
-import db from "./db.js";
+import db,{query} from "./db.js";
 import express from "express";
 import { Server } from 'socket.io';
 const app = express();
@@ -18,6 +18,14 @@ const io = new Server(server, {
 
 app.get("/", (req, resp) => {
     resp.status(200).json("socket is running");
+})
+
+app.get("/api/data-fetch",async (req,resp)=> {
+     
+    let queryForFetch = "SELECT * FROM vendorlocations WHERE 1";
+    let response = await query (queryForFetch);
+    console.log("response",response);
+    resp.status(200).json(response);
 })
 
 
@@ -45,13 +53,15 @@ io.on('connection', (socket) => {
         console.log("location",btnKaMsg);
         socket.to(room).emit("message recieved",btnKaMsg);
         io.to(room).emit("track location",btnKaMsg);
-        const query = "UPDATE `vendorlocations` SET `latitude` = ?, `longitude` = ? WHERE vendor_id = ?";
-        db.query(query, [latitude, longitude, btnKaMsg.room], (err, result) => {
-            if (err) {
-                console.error('Error updating vendor location:', err);
-                return;
-            }
-            console.log('Vendor location updated successfully');
+        const querydata = "UPDATE `vendorlocations` SET `latitude` = ?, `longitude` = ? WHERE vendor_id = ?";
+        query(querydata, [latitude, longitude, btnKaMsg.room], (err, result) => {
+            console.log("error",err);
+            console.log("response",result);
+            // if (err) {
+            //     console.error('Error updating vendor location:', err);
+            //     return;
+            // }
+            // console.log('Vendor location updated successfully');
         });
     })
 
