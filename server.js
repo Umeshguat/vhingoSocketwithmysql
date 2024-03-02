@@ -31,6 +31,7 @@ app.get("/api/data-fetch", async (req, resp) => {
 
 io.on('connection', (socket) => {
     console.log('User connection');
+    socket.emit('Aqib','your are connected');
     socket.on("connect user", (userId) => {
         console.log("userId", userId);
         socket.join(userId);
