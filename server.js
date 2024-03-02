@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
 
     socket.on("tracking", async (btnKaMsg) => {
         const room = btnKaMsg.room;
-        const longitude = btnKaMsg.location.latitude;
+        const longitude = btnKaMsg.location.longitude;
         const latitude = btnKaMsg.location.latitude;
         console.log(latitude);
         socket.join(room);
