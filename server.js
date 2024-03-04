@@ -48,34 +48,32 @@ io.on('connection', (socket) => {
         const room = btnKaMsg.room;
         const longitude = btnKaMsg.location.longitude;
         const latitude = btnKaMsg.location.latitude;
-        console.log(latitude);
+        // console.log(latitude);
         socket.join(room);
         socket.emit("room connected", "Ho gaya room connection");
         console.log("location", btnKaMsg);
         socket.to(room).emit("message recieved", btnKaMsg);
         io.to(room).emit("track location", btnKaMsg);
-        const querydata = "UPDATE `vendorlocations` SET `latitude` = ?, `longitude` = ? WHERE vendor_id = ?";
-        // query(querydata, [latitude, longitude, btnKaMsg.room], (err, result) => {
-        //     console.log("error", err);
-        //     console.log("response", result);
-        //     // if (err) {
-        //     //     console.error('Error updating vendor location:', err);
-        //     //     return;
-        //     // }
-        //     // console.log('Vendor location updated successfully');
-        // });
         try{
             const updateQuery = `UPDATE vendorlocations SET latitude = ${latitude}, longitude = ${longitude} WHERE vendor_id = ${room}`;
             const result = await query(updateQuery);
-            console.log("result","updated");
+            console.log("result update succeessfully");
         }catch(e){
             console.log("error",e);
         }
     })
-
-
     socket.on('disconnect', (socket) => {
         console.log('Disconnect');
     });
 });
 
+
+// query(querydata, [latitude, longitude, btnKaMsg.room], (err, result) => {
+//     console.log("error", err);
+//     console.log("response", result);
+//     // if (err) {
+//     //     console.error('Error updating vendor location:', err);
+//     //     return;
+//     // }
+//     // console.log('Vendor location updated successfully');
+// });
