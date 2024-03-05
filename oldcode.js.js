@@ -12,6 +12,10 @@ var server = app.listen(port, () => {
 
 
 
+const io = new Server(server, {
+    cors: { origin: "*" }
+});
+
 app.get("/", (req, resp) => {
     resp.status(200).json("socket is running");
 })
@@ -25,36 +29,30 @@ app.get("/api/data-fetch", async (req, resp) => {
 })
 
 
-const io = new Server(server, {
-    cors: { origin: "*" }
-});
-
 io.on('connection', (socket) => {
-    console.log("user is comming");
-    socket.emit("userConnected","Connected Successfully");
-    // socket.on("userSocketConnect",)
-    // socket.emit('Aqib','your are connected');
-    // socket.on("connect user", (userId) => {
-    //     console.log("userId", userId);
-    //     socket.join(userId);
-    //     socket.emit("successfull joined socket", userId)
-    // })
+    console.log('User connection');
+    socket.emit('Aqib','your are connected');
+    socket.on("connect user", (userId) => {
+        console.log("userId", userId);
+        socket.join(userId);
+        socket.emit("successfull joined socket", userId)
+    })
 
-    // socket.on("chat room", (roomId) => {
-    //     console.log("my room Id", roomId);
-    //     socket.join(roomId);
-    // })
-    // socket.emit("room connected", "Connection Successfully");
+    socket.on("chat room", (roomId) => {
+        console.log("my room Id", roomId);
+        socket.join(roomId);
+    })
+    socket.emit("room connected", "Connection Successfully");
 
 
 
 
-    //update code for
+    //update code for 
     socket.on("tracking", async (btnKaMsg) => {
         const room = btnKaMsg.room;
         const longitude = btnKaMsg.location.longitude;
         const latitude = btnKaMsg.location.latitude;
-
+    
         try {
             const updateQuery = "UPDATE vendorlocations SET latitude = ?, longitude = ? WHERE vendor_id = ?";
             const result = await query(updateQuery, [latitude, longitude, room]);
@@ -62,7 +60,7 @@ io.on('connection', (socket) => {
         } catch(e) {
             console.log("error", e);
         }
-
+    
         socket.join(room);
         socket.emit("room connected", "Ho gaya room connection");
         console.log("location", btnKaMsg);
