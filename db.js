@@ -23,7 +23,7 @@
 import mysql from 'mysql';
 
 const db = mysql.createConnection({
-  host: '51.79.204.225',
+  host: '51.79.146.36',
   port : 3306,
   user: 'vhingo_db',
   password: '!h@r!7N3z3Lh',
