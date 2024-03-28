@@ -25,9 +25,9 @@ import mysql from 'mysql';
 const db = mysql.createConnection({
   host: '51.79.204.225',
   port : 3306,
-  user: 'corecad_vhingo',
-  password: '123@Vhingo',
-  database: 'corecad_vhingo'
+  user: 'vhingo_db',
+  password: '!h@r!7N3z3Lh',
+  database: 'vhingo_db'
 });
 
 db.connect((err) => {
