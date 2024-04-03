@@ -26,7 +26,7 @@ app.get("/api/data-fetch", async (req, resp) => {
 
 app.post("/data-sent", async (req, resp) => {
     let value = [12,"allGood",'4:24 PM',2,"USER"];
-    let queryData = 'INSERT INTO your_table_name (user_id, message, time,admin_id,sendername ) VALUES (?, ?, ?,?,?)';
+    let queryData = 'INSERT INTO chats (user_id, message, time,admin_id,sendername ) VALUES (?, ?, ?,?,?)';
     const result = await query(queryData,value);
     console.log("result",result);
 })
