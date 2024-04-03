@@ -32,22 +32,6 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
     console.log("user is comming");
     socket.emit("userConnected","Connected Successfully");
-    // socket.on("userSocketConnect",)
-    // socket.emit('Aqib','your are connected');
-    // socket.on("connect user", (userId) => {
-    //     console.log("userId", userId);
-    //     socket.join(userId);
-    //     socket.emit("successfull joined socket", userId)
-    // })
-
-    // socket.on("chat room", (roomId) => {
-    //     console.log("my room Id", roomId);
-    //     socket.join(roomId);
-    // })
-    // socket.emit("room connected", "Connection Successfully");
-
-
-
 
     //update code for
     socket.on("tracking", async (btnKaMsg) => {
@@ -70,23 +54,53 @@ io.on('connection', (socket) => {
         io.to(room).emit("track location", btnKaMsg);
     });
 
-    // socket.on("tracking", async (btnKaMsg) => {
-    //     const room = btnKaMsg.room;
-    //     const longitude = btnKaMsg.location.longitude;
-    //     const latitude = btnKaMsg.location.latitude;
-    //     socket.join(room);
-    //     socket.emit("room connected", "Ho gaya room connection");
-    //     console.log("location", btnKaMsg);
-    //     socket.to(room).emit("message recieved", btnKaMsg);
-    //     io.to(room).emit("track location", btnKaMsg);
-    //     try{
-    //         const updateQuery = `UPDATE vendorlocations SET latitude = ${latitude}, longitude = ${longitude} WHERE vendor_id = ${room}`;
-    //         const result = await query(updateQuery);
-    //         console.log("result update succeessfully");
-    //     }catch(e){
-    //         console.log("error",e);
-    //     }
-    // })
+    //for chats
+    socket.on("setup",(socketId)=> {
+        console.log("setup userId",socketId);
+        socket.join(socketId);
+        socket.emit("connectedSocketId",socketId);
+        console.log("connected User");
+    })
+    socket.emit("userConnected","Connected Successfully");
+
+    socket.on("sendmessage", async (btnKaMsg) => {
+        const room = btnKaMsg.room;
+        const user_id = btnKaMsg.user_id;
+        const admin_id = btnKaMsg.admin_id;
+        const vendor_id = btnKaMsg.vendor_id;
+        const time = btnKaMsg.time;
+        const sendername = btnKaMsg.senderName;
+        const message = btnKaMsg.message;
+        console.log("vendorId",vendor_id);
+        socket.join(room);
+        try {
+            const updateQuery = "INSERT INTO chats(`user_id`, `vendor_id`, `message`, `time`,`admin_id`,`sendername`) VALUES (?,?,?,?,?,?)";
+            const result = await query(updateQuery, [user_id, vendor_id, message, time, admin_id,sendername]);
+            console.log("result update successfully");
+        } catch(e) {
+            console.log("error", e);
+        }
+
+        console.log("location", btnKaMsg);
+
+        if(btnKaMsg.senderName === "ADMIN"){
+            if(btnKaMsg?.vendor_id){
+                socket.in(vendor_id).emit("message received",btnKaMsg);
+                socket.in(vendor_id).emit("getmessage", btnKaMsg);
+            }else{
+                socket.in(user_id).emit("message received",btnKaMsg);
+                socket.in(user_id).emit("getmessage", btnKaMsg);
+            }
+        }
+        if(btnKaMsg.senderName === "USER" || btnKaMsg.senderName === "VENDOR"){
+            console.log("adminId",admin_id);
+            socket.in(admin_id).emit("message received",btnKaMsg);
+            socket.in(admin_id).emit("getmessage", btnKaMsg);
+        }
+
+    });
+    //end chats
+
     socket.on('disconnect', (socket) => {
         console.log('Disconnect');
     });
