@@ -80,8 +80,9 @@ io.on('connection', (socket) => {
         console.log("vendorId", vendor_id);
         socket.join(room);
         try {
-            const updateQuery = "INSERT INTO chats(user_id, message, time,admin_id,sendername) VALUES (12,message sent,4:24 PM)";
-            const result = await query(updateQuery, [user_id, message, time, +admin_id, sendername]);
+            const values = [user_id,message,time,+admin_id,sendername];
+            const insertQuery = 'INSERT INTO chats (user_id, message, time,admin_id,sendername ) VALUES (?, ?, ?,?,?)';
+            const result = await query(insertQuery,values);
             console.log("result message add successfully");
         } catch (e) {
             console.log("error", e);
