@@ -24,6 +24,13 @@ app.get("/api/data-fetch", async (req, resp) => {
     resp.status(200).json(response);
 })
 
+app.post("/data-sent", async (req, resp) => {
+    let value = [12,"allGood",'4:24 PM',2,"USER"];
+    let queryData = 'INSERT INTO your_table_name (user_id, message, time,admin_id,sendername ) VALUES (?, ?, ?,?,?)';
+    const result = await query(queryData,value);
+    console.log("result",result);
+})
+
 
 const io = new Server(server, {
     cors: { origin: "*" }
@@ -31,7 +38,7 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
     console.log("user is comming");
-    socket.emit("userConnected","Connected Successfully");
+    socket.emit("userConnected", "Connected Successfully");
 
     //update code for
     socket.on("tracking", async (btnKaMsg) => {
@@ -43,7 +50,7 @@ io.on('connection', (socket) => {
             const updateQuery = "UPDATE vendorlocations SET latitude = ?, longitude = ? WHERE vendor_id = ?";
             const result = await query(updateQuery, [latitude, longitude, room]);
             console.log("result update successfully");
-        } catch(e) {
+        } catch (e) {
             console.log("error", e);
         }
 
@@ -55,13 +62,13 @@ io.on('connection', (socket) => {
     });
 
     //for chats
-    socket.on("setup",(socketId)=> {
-        console.log("setup userId",socketId);
+    socket.on("setup", (socketId) => {
+        console.log("setup userId", socketId);
         socket.join(socketId);
-        socket.emit("connectedSocketId",socketId);
+        socket.emit("connectedSocketId", socketId);
         console.log("connected User");
     })
-   
+
     socket.on("sendmessage", async (btnKaMsg) => {
         const room = btnKaMsg.room;
         const user_id = btnKaMsg.user_id;
@@ -70,30 +77,30 @@ io.on('connection', (socket) => {
         const time = btnKaMsg.time;
         const sendername = btnKaMsg.senderName;
         const message = btnKaMsg.message;
-        console.log("vendorId",vendor_id);
+        console.log("vendorId", vendor_id);
         socket.join(room);
         try {
-            const updateQuery = "INSERT INTO chats('user_id', 'message', 'time','admin_id','sendername') VALUES (?,?,?,?,?,?)";
-            const result = await query(updateQuery, [user_id, message, time, +admin_id,sendername]);
+            const updateQuery = "INSERT INTO chats(user_id, message, time,admin_id,sendername) VALUES (12,message sent,4:24 PM)";
+            const result = await query(updateQuery, [user_id, message, time, +admin_id, sendername]);
             console.log("result message add successfully");
-        } catch(e) {
+        } catch (e) {
             console.log("error", e);
         }
 
         console.log("location", btnKaMsg);
         console.log(btnKaMsg.senderName === "USER");
-        if(btnKaMsg.senderName === "ADMIN"){
-            if(btnKaMsg?.vendor_id){
-                socket.in(vendor_id).emit("message received",btnKaMsg);
+        if (btnKaMsg.senderName === "ADMIN") {
+            if (btnKaMsg?.vendor_id) {
+                socket.in(vendor_id).emit("message received", btnKaMsg);
                 socket.in(vendor_id).emit("getmessage", btnKaMsg);
-            }else{
-                socket.in(user_id).emit("message received",btnKaMsg);
+            } else {
+                socket.in(user_id).emit("message received", btnKaMsg);
                 socket.in(user_id).emit("getmessage", btnKaMsg);
             }
         }
-        if(btnKaMsg.senderName === "USER" || btnKaMsg.senderName === "VENDOR"){
-            console.log("adminId",admin_id);
-            socket.in(admin_id).emit("message received",btnKaMsg);
+        if (btnKaMsg.senderName === "USER" || btnKaMsg.senderName === "VENDOR") {
+            console.log("adminId", admin_id);
+            socket.in(admin_id).emit("message received", btnKaMsg);
             socket.in(admin_id).emit("getmessage", btnKaMsg);
         }
 
