@@ -73,7 +73,7 @@ io.on('connection', (socket) => {
         console.log("vendorId",vendor_id);
         socket.join(room);
         try {
-            const updateQuery = "INSERT INTO chats(`user_id`, `message`, `time`,`admin_id`,`sendername`) VALUES (?,?,?,?,?,?)";
+            const updateQuery = "INSERT INTO chats('user_id', 'message', 'time','admin_id','sendername') VALUES (?,?,?,?,?,?)";
             const result = await query(updateQuery, [user_id, message, time, +admin_id,sendername]);
             console.log("result message add successfully");
         } catch(e) {
