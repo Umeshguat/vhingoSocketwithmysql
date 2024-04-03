@@ -80,10 +80,18 @@ io.on('connection', (socket) => {
         console.log("vendorId", vendor_id);
         socket.join(room);
         try {
-            const values = [user_id,message,time,+admin_id,sendername];
-            const insertQuery = 'INSERT INTO chats (user_id, message, time,admin_id,sendername ) VALUES (?, ?, ?,?,?)';
-            const result = await query(insertQuery,values);
-            console.log("result message add successfully");
+            if (user_id) {
+                const values = [user_id,message,time,+admin_id,sendername];
+                const insertQuery = 'INSERT INTO chats (user_id, message, time,admin_id,sendername ) VALUES (?, ?, ?,?,?)';
+                const result = await query(insertQuery,values);
+                console.log("result message add successfully");  
+            }else{
+                const values = [vendor_id,message,time,+admin_id,sendername];
+                const insertQuery = 'INSERT INTO chats (vendor_id, message, time,admin_id,sendername ) VALUES (?, ?, ?,?,?)';
+                const result = await query(insertQuery,values);
+                console.log("result message add successfully");
+            }
+          
         } catch (e) {
             console.log("error", e);
         }
