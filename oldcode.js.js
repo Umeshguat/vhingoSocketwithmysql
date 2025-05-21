@@ -9,8 +9,8 @@ const wifiIp = "192.168.1.4"
 var server = app.listen(port, () => {
     console.log(`Server is running ${port}`);
 });
-
-
+d
+xcx
 
 const io = new Server(server, {
     cors: { origin: "*" }
