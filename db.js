@@ -23,11 +23,11 @@
 import mysql from 'mysql';
 
 const db = mysql.createConnection({
-  host: '51.79.146.36',
+  host: '127.0.0.1',
   port : 3306,
-  user: 'vhingo_db',
-  password: '!h@r!7N3z3Lh',
-  database: 'vhingo_db'
+  user: 'root',
+  password: '',
+  database: 'prime_hill'
 });
 
 db.connect((err) => {
