@@ -31,11 +31,9 @@ app.use(express.json());
 app.post('/emit', (req, resp) => {
 
     const { event, channel, data } = req.body;
-  
     if (!event || !channel || !data) {
         return resp.status(400).send({ error: 'Missing required fields' });
     }
-
     io.to(channel).emit(event, data);
     resp.send({ status: 'emitted' });
 });
@@ -53,7 +51,7 @@ io.on('connection', (socket) => {
     socket.on("qrcode", (data) => {
         const room = data.room;
         socket.join(room); // Join room if not already
-        console.log("qrcode event   received with data:", data);
+            console.log("qrcode event   received with data:", data);
 
         if (data.token) {
             console.log("Sending token to room:", room);
